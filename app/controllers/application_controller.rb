@@ -1,10 +1,9 @@
 class ApplicationController < ActionController::API
   include Authenticatable
   include Respondable
+  include HandlingError
 
   around_action :log_request
-
-
 
   def log_request
     request_uuid = SecureRandom.uuid
