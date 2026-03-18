@@ -23,5 +23,7 @@ module HungryhubV2
     #
     # config.time_zone = "Central Time (US & Canada)"
     # config.eager_load_paths << Rails.root.join("extras")
+    config.api_only = true
+    config.middleware.delete ActionDispatch::HostAuthorization
   end
 end
