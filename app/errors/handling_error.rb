@@ -45,7 +45,7 @@ module HandlingError
         :unprocessable_entity
       when ConflictError
         :conflict
-      when BadRequestError, ParameterMissingError, ActionController::ParameterMissing
+      when BadRequestError, ParameterMissingError
         :bad_request
       else
         :internal_server_error
