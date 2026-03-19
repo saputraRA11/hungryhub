@@ -9,14 +9,14 @@ module Respondable
     }, status: status
   end
 
-  def render_list(collection, page:, limit:, total:)
+  def render_list(collection, page:, per_page:, total:)
     render json: {
       status_code: 200,
       messages: [],
       data: {
         items: collection,
         page: page.to_i,
-        limit: limit.to_i,
+        per_page: per_page.to_i,
         total: total.to_i
       }
     }, status: :ok

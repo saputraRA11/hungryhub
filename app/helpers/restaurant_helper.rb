@@ -1,12 +1,27 @@
 module RestaurantHelper
   class Validator
+    MAX_PAGINATION_PER_PAGE = 100
+
     def initialize(params)
       @params = params
     end
 
-    def create
+    def find_restaurants
+      validate_permitted!(:page, :limit)
+      
+      per_page = [
+        @params.fetch(:limit, 10).to_i,
+        MAX_PAGINATION_PER_PAGE
+      ].min
+
+      page = @params.fetch(:page, 1).to_i
+      
+      [page, per_page]
+    end
+
+    def create_update
       validate_permitted!(:name, :address, :opening_hours)
-      validate_presence!(:name, :address, :opening_hours)
+      validate_presence!(:name, :address, :opening_hours) if @params[:action] == :create
       @params.permit(:name, :address, :opening_hours)
     end
 
