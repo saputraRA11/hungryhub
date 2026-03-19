@@ -1,22 +1,20 @@
-module AuthHelper
+module RestaurantHelper
   class Validator
     def initialize(params)
       @params = params
     end
 
-    def register_params
-      validate_permitted!(:email, :password)
-      validate_presence!(:email, :password)
-      @params.permit(:email, :password)
+    def create
+      validate_permitted!(:name, :address, :opening_hours)
+      validate_presence!(:name, :address, :opening_hours)
+      @params.permit(:name, :address, :opening_hours)
     end
 
-    def login_params
-      validate_permitted!(:email, :password)
-      validate_presence!(:email, :password)
-      @params.permit(:email, :password)
+    def find_one
+      restaurant = Restaurant.find_by(id: @params[:id])
+      raise NotFoundError, "Restaurant not found" unless restaurant
+      @restaurant = restaurant
     end
-
-    private
 
     def validate_presence!(*keys)
       missing = keys.select { |key| @params.fetch(key, "").to_s.strip.empty? }
@@ -27,7 +25,7 @@ module AuthHelper
     end
 
     def validate_permitted!(*keys)
-      sent_keys = @params.except(:controller, :action, :id, :format, :auth).keys.map(&:to_sym)
+      sent_keys = @params.except(:controller, :action, :id, :format, :restaurant).keys.map(&:to_sym)
       unpermitted = sent_keys - keys
       if unpermitted.any?
         errors = unpermitted.map { |k| "unpermitted parameter: #{k}" }

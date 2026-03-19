@@ -7,8 +7,15 @@ class ConflictError < ApiError; end
 class UnauthorizedError < ApiError; end
 class BadRequestError < ApiError; end
 class InternalServerError < ApiError; end
-
 class ParameterMissingError < ApiError
+  attr_reader :messages_list
+  def initialize(messages_list)
+    @messages_list = Array(messages_list)
+    super(@messages_list.join(", "))
+  end
+end
+
+class UnpermittedParameterError < ApiError
   attr_reader :messages_list
   def initialize(messages_list)
     @messages_list = Array(messages_list)
@@ -22,6 +29,7 @@ module HandlingError
   included do
     rescue_from ApiError, with: :handle_error
     rescue_from ActionController::ParameterMissing, with: :handle_error
+    rescue_from JSON::ParserError, with: :handle_error
   end
 
   private
@@ -46,7 +54,7 @@ module HandlingError
         :unprocessable_entity
       when ConflictError
         :conflict
-      when BadRequestError, ParameterMissingError
+      when BadRequestError, ParameterMissingError, UnpermittedParameterError, JSON::ParserError
         :bad_request
       else
         :internal_server_error
