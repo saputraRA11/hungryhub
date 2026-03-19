@@ -19,11 +19,10 @@ module Api
       end
 
       def login
-        user = User.find_by!(email: params[:email])
+        data = validator_login.login_params
+        user = User.find_by(email: data[:email])
 
-        unless user.authenticate(params[:password])
-          raise UnauthorizedError, "Invalid email or password"
-        end
+        raise AuthenticationError, "Invalid email or password" unless user.authenticate(data[:password])
 
         token = AuthenticationTokenService.call(user.id)
         render_success({ email: user.email, token: token })

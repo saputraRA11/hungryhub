@@ -5,13 +5,23 @@ module AuthHelper
     end
 
     def register_params
-      @params.require([:email, :password])
+      validate_presence!(:email, :password)
       @params.permit(:email, :password)
     end
 
     def login_params
-      @params.require([:email, :password])
+      validate_presence!(:email, :password)
       @params.permit(:email, :password)
+    end
+
+    private
+
+    def validate_presence!(*keys)
+      missing = keys.select { |key| @params.fetch(key, "").to_s.strip.empty? }
+      if missing.any?
+        errors = missing.map { |k| "param is missing or the value is empty or invalid: #{k}" }
+        raise HandlingError::ParameterMissingError.new(errors)
+      end
     end
   end
 end

@@ -8,30 +8,49 @@ module HandlingError
   class ValidationError < ApiError; end
   class ConflictError < ApiError; end
   class UnauthorizedError < ApiError; end
+  class BadRequestError < ApiError; end
   class InternalServerError < ApiError; end
+  class ParameterMissingError < ApiError
+    attr_reader :messages_list
+    def initialize(messages_list)
+      @messages_list = Array(messages_list)
+      super(@messages_list.join(", "))
+    end
+  end
 
   included do
     rescue_from HandlingError::ApiError, with: :handle_error
+    rescue_from ActionController::ParameterMissing, with: :handle_error
   end
 
   private
 
   def handle_error(e)
-    case e
-    when AuthenticationError, UnauthorizedError
-      render_error([ "System Got Error: " + e.message ], status: :unauthorized)
-    when AuthorizationError
-      render_error([ "System Got Error: " + e.message ], status: :forbidden)
-    when NotFoundError
-      render_error([ "System Got Error: " + e.message ], status: :not_found)
-    when ValidationError
-      render_error([ "System Got Error: " + e.message ], status: :unprocessable_entity)
-    when ConflictError
-      render_error([ "System Got Error: " + e.message ], status: :conflict)
-    when InternalServerError
-      render_error([ "System Got Error: " + e.message ], status: :internal_server_error)
-    else
-      render_error([ "System Got Error: " + e.message ], status: :internal_server_error)
-    end
+    messages =
+      if e.respond_to?(:messages_list) && e.messages_list.is_a?(Array)
+        e.messages_list.map { |msg| "#{msg}" }
+      else
+        [ "#{e.message}" ]
+      end
+
+    status =
+      case e
+      when AuthenticationError, UnauthorizedError
+        :unauthorized
+      when AuthorizationError
+        :forbidden
+      when NotFoundError
+        :not_found
+      when ValidationError
+        :unprocessable_entity
+      when ConflictError
+        :conflict
+      when BadRequestError, ParameterMissingError, ActionController::ParameterMissing
+        :bad_request
+      else
+        :internal_server_error
+      end
+
+    render_error(messages, status: status)
   end
 end
