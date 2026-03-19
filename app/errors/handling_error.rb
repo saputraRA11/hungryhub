@@ -1,25 +1,26 @@
+class ApiError < StandardError; end
+class AuthenticationError < ApiError; end
+class AuthorizationError < ApiError; end
+class NotFoundError < ApiError; end
+class ValidationError < ApiError; end
+class ConflictError < ApiError; end
+class UnauthorizedError < ApiError; end
+class BadRequestError < ApiError; end
+class InternalServerError < ApiError; end
+
+class ParameterMissingError < ApiError
+  attr_reader :messages_list
+  def initialize(messages_list)
+    @messages_list = Array(messages_list)
+    super(@messages_list.join(", "))
+  end
+end
+
 module HandlingError
   extend ActiveSupport::Concern
 
-  class ApiError < StandardError; end
-  class AuthenticationError < ApiError; end
-  class AuthorizationError < ApiError; end
-  class NotFoundError < ApiError; end
-  class ValidationError < ApiError; end
-  class ConflictError < ApiError; end
-  class UnauthorizedError < ApiError; end
-  class BadRequestError < ApiError; end
-  class InternalServerError < ApiError; end
-  class ParameterMissingError < ApiError
-    attr_reader :messages_list
-    def initialize(messages_list)
-      @messages_list = Array(messages_list)
-      super(@messages_list.join(", "))
-    end
-  end
-
   included do
-    rescue_from HandlingError::ApiError, with: :handle_error
+    rescue_from ApiError, with: :handle_error
     rescue_from ActionController::ParameterMissing, with: :handle_error
   end
 
