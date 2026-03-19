@@ -237,5 +237,5 @@ components:
       in: header
       description: Provide your JWT token in the format "Token token=eyJhbGciOi..."
 servers:
-- url: http://localhost:3000
-  description: Local development server
+- url: "/"
+  description: Current server
