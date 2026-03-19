@@ -10,7 +10,7 @@ class SwaggerJsInjector
 
     # Only inject into the Swagger UI index page
     path = env['PATH_INFO'] || ''
-    if path =~ %r{/api-docs(/index\.html)?$} || path == '/api-docs' || path == '/api-docs/'
+    if path =~ %r{^/api-docs/?(index\.html)?$} || path == '/api-docs' || path == '/api-docs/'
       content_type = headers['content-type'] || headers['Content-Type'] || ''
       if content_type.include?('text/html')
         body = ''
