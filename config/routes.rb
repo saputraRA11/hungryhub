@@ -9,8 +9,9 @@ Rails.application.routes.draw do
       post "auth/register", to: "auth#register"
       post "auth/login",    to: "auth#login"
 
-      resources :restaurants do
-        resources :menu_items
+      resources :restaurants
+      scope "restaurants/:id" do
+        resources :menu_items, only: %i[index create]
       end
     end
   end

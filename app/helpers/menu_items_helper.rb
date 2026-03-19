@@ -1,14 +1,13 @@
-module RestaurantHelper
-  class ValidatorRestaurant
+module MenuItemsHelper
+  class ValidatorMenuItem
     MAX_PAGINATION_PER_PAGE = 100
 
     def initialize(params)
       @params = params
     end
 
-    def find_restaurants
-      validate_permitted!(:page, :per_page)
-
+    def find_menu_items
+      validate_permitted!(:page, :per_page, :category, :search)
       per_page = [
         @params.fetch(:per_page, 10).to_i,
         MAX_PAGINATION_PER_PAGE
@@ -20,15 +19,16 @@ module RestaurantHelper
     end
 
     def create_update
-      validate_permitted!(:name, :address, :opening_hours)
-      validate_presence!(:name, :address, :opening_hours) if @params[:action] == :create
-      @params.permit(:name, :address, :opening_hours)
+      validate_permitted!(:name, :description, :price, :category, :is_available)
+      validate_presence!(:name, :description, :price, :category, :is_available) if @params[:action] == :create
+      raise NotFoundError, "Category not found in #{MenuItem::CATEGORIES.join(", ")}" if !MenuItem::CATEGORIES.include?(@params[:category])
+      @params.permit(:name, :description, :price, :category, :is_available)
     end
 
     def find_one(id_key = :id)
-      restaurant = Restaurant.find_by(id: @params[id_key])
-      raise NotFoundError, "Restaurant not found" unless restaurant
-      @restaurant = restaurant
+      menu_item = MenuItem.find_by(id: @params[id_key])
+      raise NotFoundError, "Menu item not found" unless menu_item
+      @menu_item = menu_item
     end
 
     def validate_presence!(*keys)
@@ -40,7 +40,7 @@ module RestaurantHelper
     end
 
     def validate_permitted!(*keys)
-      sent_keys = @params.except(:controller, :action, :id, :format, :restaurant).keys.map(&:to_sym)
+      sent_keys = @params.except(:controller, :action, :id, :format, :menu_item).keys.map(&:to_sym)
       unpermitted = sent_keys - keys
       if unpermitted.any?
         errors = unpermitted.map { |k| "unpermitted parameter: #{k}" }

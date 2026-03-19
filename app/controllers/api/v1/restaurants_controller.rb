@@ -34,15 +34,15 @@ module Api
 
       private
         def set_restaurant
-          @restaurant = Validator.new(params).find_one
+          @restaurant = ValidatorRestaurant.new(params).find_one
         end
 
         def validation_create
-          @payload_data = Validator.new(params).create_update
+          @payload_data = ValidatorRestaurant.new(params).create_update
         end
 
         def validation_find_restaurants
-          @page, @per_page = Validator.new(params).find_restaurants
+          @page, @per_page = ValidatorRestaurant.new(params).find_restaurants
         end
     end
   end

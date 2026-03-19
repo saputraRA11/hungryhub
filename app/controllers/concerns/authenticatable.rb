@@ -13,6 +13,10 @@ module Authenticatable extend ActiveSupport::Concern
 
     raise UnauthorizedError, "Invalid token" if user_id.blank?
 
-    @current_user = User.find(user_id)
+    user = User.find_by(id: user_id)
+
+    raise UnauthorizedError, "User not found" if user.blank?
+
+    @current_user = user
   end
 end

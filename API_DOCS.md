@@ -137,7 +137,7 @@ curl -X GET http://localhost:3000/api/v1/restaurants/1 \
     "id": 1,
     "name": "Restaurant Name",
     "address": "123 Main St",
-    "category": "main"
+    "opening_hours": "08:00 - 22:00"
   }
 }
 ```
@@ -148,7 +148,7 @@ curl -X GET http://localhost:3000/api/v1/restaurants/1 \
 **Body Parameters:**
 - `name` (string, required)
 - `address` (string, required)
-- `category` (string, required) - Must be one of: `appetizer`, `main`, `dessert`, `drink`
+- `opening_hours` (string, required)
 
 ### cURL Example:
 ```bash
@@ -158,7 +158,7 @@ curl -X POST http://localhost:3000/api/v1/restaurants \
   -d '{
     "name": "Hungry Hub Cafe",
     "address": "456 Food Ave",
-    "category": "main"
+    "opening_hours": "08:00 - 22:00"
   }'
 ```
 
@@ -168,7 +168,7 @@ curl -X POST http://localhost:3000/api/v1/restaurants \
 **Body Parameters:** (all optional)
 - `name` (string)
 - `address` (string)
-- `category` (string) - Must be one of: `appetizer`, `main`, `dessert`, `drink`
+- `opening_hours` (string)
 
 ### cURL Example:
 ```bash
@@ -176,7 +176,8 @@ curl -X PUT http://localhost:3000/api/v1/restaurants/1 \
   -H "Authorization: Token token=YOUR_JWT_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{
-    "name": "Updated Cafe Name"
+    "name": "Updated Cafe Name",
+    "opening_hours": "09:00 - 23:00"
   }'
 ```
 
@@ -189,4 +190,53 @@ curl -X PUT http://localhost:3000/api/v1/restaurants/1 \
 curl -X DELETE http://localhost:3000/api/v1/restaurants/1 \
   -H "Authorization: Token token=YOUR_JWT_TOKEN" \
   -H "Content-Type: application/json"
+```
+
+---
+
+# Menu Items API Documentation
+
+Base URL: `http://localhost:3000/api/v1/restaurants/:id/menu_items`
+
+**Important:** All endpoints below require authentication. You must include the `Authorization: Token token=YOUR_JWT_TOKEN` header.
+
+## 1. List Menu Items
+**Endpoint:** `GET /`
+**Description:** Retrieves a list of menu items for a specific restaurant.
+
+**Query Parameters:**
+- `page` (integer, optional) - Page number to retrieve. Default is `1`.
+- `per_page` (integer, optional) - Number of items per page. Default is `10`, maximum is `100`.
+- `category` (string, optional) - Filter by category.
+- `search` (string, optional) - Filter by name.
+
+### cURL Example:
+```bash
+curl -X GET "http://localhost:3000/api/v1/restaurants/1/menu_items?page=1&per_page=25&category=main&search=nasi" \
+  -H "Authorization: Token token=YOUR_JWT_TOKEN" \
+  -H "Content-Type: application/json"
+```
+
+## 2. Create a New Menu Item
+**Endpoint:** `POST /`
+**Description:** Creates a new menu item for the restaurant.
+**Body Parameters:** Note that fields are sent directly in the payload root.
+- `name` (string, required)
+- `description` (string, required)
+- `price` (float, required)
+- `category` (string, required) - Must be one of `appetizer`, `main`, `dessert`, `drink`.
+- `is_available` (boolean, required)
+
+### cURL Example:
+```bash
+curl -X POST http://localhost:3000/api/v1/restaurants/1/menu_items \
+  -H "Authorization: Token token=YOUR_JWT_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Nasi Goreng Spesial",
+    "description": "Nasi goreng dengan telur dan ayam",
+    "price": 25000,
+    "category": "main",
+    "is_available": true
+  }'
 ```
