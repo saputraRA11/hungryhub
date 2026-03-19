@@ -5,4 +5,9 @@ if [ "${@: -2:1}" == "./bin/rails" ] && [ "${@: -1:1}" == "server" ]; then
   ./bin/rails db:prepare
 fi
 
+# Always prepare database on Railway (first deploy or redeploy)
+if [ -n "${RAILWAY_ENVIRONMENT:-}" ]; then
+  ./bin/rails db:prepare
+fi
+
 exec "${@}"
