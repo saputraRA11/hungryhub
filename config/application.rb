@@ -29,8 +29,6 @@ module HungryhubV2
     # Autoload middleware directory
     config.autoload_paths << Rails.root.join('app', 'middleware')
 
-    # Inject custom JS into Swagger UI for JWT auto-apply
-    require_relative '../app/middleware/swagger_js_injector'
-    config.middleware.use SwaggerJsInjector
+
   end
 end
