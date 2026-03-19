@@ -56,14 +56,21 @@ group :development, :test do
 end
 
 group :development do
+  gem "rswag-specs"
+  gem "rspec-rails"
   # Use console on exceptions pages [https://github.com/rails/web-console]
   gem "web-console"
 end
 
 group :test do
+  gem "rswag-specs"
+  gem "rspec-rails"
   # Use system testing [https://guides.rubyonrails.org/testing.html#system-testing]
   gem "capybara"
   gem "selenium-webdriver"
 end
+
+gem "rswag-api"
+gem "rswag-ui"
 
 gem "faker", "~> 3.6"

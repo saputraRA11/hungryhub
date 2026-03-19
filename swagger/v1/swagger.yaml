@@ -1,0 +1,241 @@
+---
+openapi: 3.0.1
+info:
+  title: API V1
+  version: v1
+paths:
+  "/api/v1/auth/register":
+    post:
+      summary: register user
+      tags:
+      - Authentication
+      parameters: []
+      responses:
+        '201':
+          description: Created
+        '400':
+          description: Bad Request
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+              required:
+              - email
+              - password
+  "/api/v1/auth/login":
+    post:
+      summary: login user
+      tags:
+      - Authentication
+      parameters: []
+      responses:
+        '200':
+          description: OK
+        '401':
+          description: Unauthorized
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+              required:
+              - email
+              - password
+  "/api/v1/restaurants/{restaurant_id}/menu_items":
+    parameters:
+    - name: restaurant_id
+      in: path
+      description: restaurant_id
+      required: true
+      schema:
+        type: integer
+    get:
+      summary: list menu items
+      tags:
+      - Menu Items
+      security:
+      - TokenAuth: []
+      parameters:
+      - name: page
+        in: query
+        description: Page number
+        required: false
+        schema:
+          type: integer
+      - name: per_page
+        in: query
+        description: Items per page
+        required: false
+        schema:
+          type: integer
+      - name: category
+        in: query
+        description: Filter by category
+        required: false
+        schema:
+          type: string
+      - name: search
+        in: query
+        description: Filter by name
+        required: false
+        schema:
+          type: string
+      responses:
+        '200':
+          description: successful
+    post:
+      summary: create menu item
+      tags:
+      - Menu Items
+      security:
+      - TokenAuth: []
+      parameters: []
+      responses:
+        '201':
+          description: created
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                description:
+                  type: string
+                price:
+                  type: number
+                  format: float
+                category:
+                  type: string
+                  enum:
+                  - appetizer
+                  - main
+                  - dessert
+                  - drink
+                is_available:
+                  type: boolean
+              required:
+              - name
+              - description
+              - price
+              - category
+              - is_available
+  "/api/v1/restaurants":
+    get:
+      summary: list restaurants
+      tags:
+      - Restaurants
+      security:
+      - TokenAuth: []
+      parameters:
+      - name: page
+        in: query
+        description: Page number
+        required: false
+        schema:
+          type: integer
+      - name: per_page
+        in: query
+        description: Items per page
+        required: false
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: successful
+    post:
+      summary: create restaurant
+      tags:
+      - Restaurants
+      security:
+      - TokenAuth: []
+      parameters: []
+      responses:
+        '201':
+          description: created
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                address:
+                  type: string
+                opening_hours:
+                  type: string
+              required:
+              - name
+              - address
+              - opening_hours
+  "/api/v1/restaurants/{id}":
+    parameters:
+    - name: id
+      in: path
+      description: id
+      required: true
+      schema:
+        type: integer
+    get:
+      summary: show restaurant
+      tags:
+      - Restaurants
+      security:
+      - TokenAuth: []
+      responses:
+        '200':
+          description: successful
+    put:
+      summary: update restaurant
+      tags:
+      - Restaurants
+      security:
+      - TokenAuth: []
+      parameters: []
+      responses:
+        '200':
+          description: successful
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                address:
+                  type: string
+                opening_hours:
+                  type: string
+    delete:
+      summary: delete restaurant
+      tags:
+      - Restaurants
+      security:
+      - TokenAuth: []
+      responses:
+        '200':
+          description: successful
+components:
+  securitySchemes:
+    TokenAuth:
+      type: apiKey
+      name: Authorization
+      in: header
+      description: Provide your JWT token in the format "Token token=eyJhbGciOi..."
+servers:
+- url: http://localhost:3000
+  description: Local development server
