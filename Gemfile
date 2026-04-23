@@ -73,4 +73,4 @@ end
 gem "rswag-api"
 gem "rswag-ui"
 
-gem "faker", "~> 3.6"
+gem "faker", "~> 3.8"
